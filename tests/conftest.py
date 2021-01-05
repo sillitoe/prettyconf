@@ -4,7 +4,8 @@ import tempfile
 
 import pytest
 
-from prettyconf.loaders import CommandLine
+from prettyconf.loaders import AbstractConfigurationLoader, CommandLine
+from prettyconf.sources import RecursiveFileSearchSource, Source
 from .factory import parser_factory
 
 ENVFILE_CONTENT = """
@@ -97,3 +98,27 @@ def ini_config(files_path):
     yield inifile
 
     os.remove(inifile)
+
+
+@pytest.fixture
+def dummy_loader():
+    class DummyLoader(AbstractConfigurationLoader):
+        def __repr__(self):
+            return 'DummyLoader()'
+
+        def __init__(self):
+            super().__init__()
+            self.configs = {}
+
+        def _load(self, source: Source):
+            self.configs = {'status': 'loaded'}
+
+        def _get_config(self, key, source):
+            return self.configs[key]
+
+    return DummyLoader()
+
+
+@pytest.fixture
+def source():
+    return RecursiveFileSearchSource()

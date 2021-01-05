@@ -51,6 +51,8 @@ following file structure:
       app/
         settings.py
 
+.. TODO: Update this part
+
 If you call ``config()`` from ``project/app/settings.py`` the library will
 start looking for configuration files at ``project/app`` until it finds
 ``.env|*.ini|*.cfg`` files.

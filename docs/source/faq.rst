@@ -65,12 +65,16 @@ See the lookup order of configurations below
 +---------------+------------------+------------------------+-------------------------+
 | Lookup Order  | prettyconf       | python-decouple (<3.0) | python-decouple (>=3.0) |
 +===============+==================+========================+=========================+
+| 1             | CLI args         | N/A                    | N/A                     |
++---------------+------------------+------------------------+-------------------------+
 | 1             | ENVVAR           | .env                   | ENVVAR                  |
 +---------------+------------------+------------------------+-------------------------+
 | 2             | .env             | settings.ini           | .env                    |
 +---------------+------------------+------------------------+-------------------------+
 | 3             | \*.cfg or \*.ini | ENVVAR                 | settings.ini            |
 +---------------+------------------+------------------------+-------------------------+
+
+.. TODO: Update this part
 
 .. _some: https://github.com/henriquebastos/python-decouple/pull/4
 .. _contributions: https://github.com/henriquebastos/python-decouple/pull/5

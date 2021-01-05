@@ -1,7 +1,10 @@
-3.0.0
-=====
+3.0.0-alpha1
+============
 
+  - Major refactor to split responsibility over Loaders, File Discoverability,
+    Source and Configuration
   - Add new cast `config.json` for JSON configurations
+  - Remove some py2 code and apply uniform PEP-8 styling
 
 2.1.0
 =====

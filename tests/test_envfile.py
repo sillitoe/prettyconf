@@ -6,7 +6,7 @@ from prettyconf.loaders import EnvFile
 def test_basic_config_object(envfile):
     config = EnvFile(envfile)
 
-    assert repr(config) == 'EnvFile("{}")'.format(envfile)
+    assert repr(config) == f'EnvFile([{envfile!r}])'
 
 
 def test_config_file_parsing(envfile):

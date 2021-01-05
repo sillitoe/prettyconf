@@ -1,20 +1,9 @@
 import ast
-import os
-import sys
+import warnings
 
 from .casts import Boolean, JSON, List, Option, Tuple
 from .exceptions import UnknownConfiguration
-from .loaders import Environment, RecursiveSearch
-
-MAGIC_FRAME_DEPTH = 2
-
-
-def _caller_path():
-    # MAGIC! Get the caller's module path.
-    # noinspection PyProtectedMember
-    frame = sys._getframe(MAGIC_FRAME_DEPTH)
-    path = os.path.dirname(os.path.abspath(frame.f_code.co_filename))
-    return path
+from .loaders import Loaders
 
 
 class Configuration(object):
@@ -27,34 +16,32 @@ class Configuration(object):
     json = JSON()
 
     def __init__(self, loaders=None):
-        self._recursive_search = None
-        if loaders is None:
-            self._recursive_search = RecursiveSearch()
-            loaders = [
-                Environment(),
-                self._recursive_search,
-            ]
+        if not isinstance(loaders, Loaders):
+            loaders = Loaders(loaders)
+        self.loaders_manager = loaders
 
-        self.loaders = loaders
+    @property
+    def loaders(self):
+        warnings.warn(
+            'This property will be deprecated soon. Use self.load_manager.loaders instead',
+            PendingDeprecationWarning,
+        )
+        return self.loaders_manager.loaders
 
     def __repr__(self):
-        loaders = ', '.join([repr(l) for l in self.loaders])
+        loaders = ', '.join([repr(loader) for loader in self.loaders_manager.loaders])
         return '{}(loaders=[{}])'.format(self.__class__.__name__, loaders)
 
-    def __call__(self, item, cast=lambda v: v, **kwargs):
+    def __call__(self, item, cast=lambda v: v, source=None, **kwargs):
         if not callable(cast):
             raise TypeError("Cast must be callable")
 
-        if self._recursive_search:
-            self._recursive_search.starting_path = _caller_path()
+        try:
+            config = self.loaders_manager.get_config(item, source)
+        except KeyError:
+            config = kwargs.get('default')
 
-        for loader in self.loaders:
-            try:
-                return cast(loader[item])
-            except KeyError:
-                continue
+        if config is None:
+            raise UnknownConfiguration(f"Configuration '{item}' not found")
 
-        if 'default' not in kwargs:
-            raise UnknownConfiguration("Configuration '{}' not found".format(item))
-
-        return cast(kwargs["default"])
+        return cast(config)

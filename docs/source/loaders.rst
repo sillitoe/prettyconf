@@ -1,6 +1,8 @@
 Configuration Loaders
 ---------------------
 
+.. TODO: Update this whole chapter
+
 Loaders are in charge of loading configuration from various sources, like
 ``.ini`` files or *environment* variables. Loaders are ment to chained, so that
 prettyconf checks one by one for a given configuration variable.
@@ -205,13 +207,13 @@ AwsParameterStore
 .. autoclass:: prettyconf.loaders.AwsParameterStore
 
 The ``AwsParameterStore`` loader gets configuration from the AWS Parameter Store,
-part of AWS Systems Manager. The loader will be skipped if the parameter store is 
+part of AWS Systems Manager. The loader will be skipped if the parameter store is
 unreachable (connectivity, unavailability, access permissions).
 The loader respects parameter hierarchies, performing non-recursive discoveries.
-The loader accepts AWS access secrets and region when instantiated, otherwise, it 
+The loader accepts AWS access secrets and region when instantiated, otherwise, it
 will use system-wide defaults (if available).
-The AWS parameter store supports three parameter types: ``String``, ``StringList`` 
-and ``SecureString``. All types are read as strings, however, decryption of 
+The AWS parameter store supports three parameter types: ``String``, ``StringList``
+and ``SecureString``. All types are read as strings, however, decryption of
 ``SecureStrings`` is not handled by the loader.
 
 .. code-block:: python

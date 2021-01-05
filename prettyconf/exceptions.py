@@ -20,3 +20,11 @@ class UnknownConfiguration(ConfigurationException):
 
 class InvalidConfiguration(ConfigurationException):
     pass
+
+
+class ParserError(InvalidConfigurationFile):
+    pass
+
+
+class FileNotFound(ConfigurationException):
+    pass

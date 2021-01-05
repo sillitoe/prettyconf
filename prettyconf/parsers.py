@@ -1,5 +1,7 @@
 from typing import Union, Tuple, Iterator
 
+from .exceptions import ParserError
+
 STATE_INITIAL = "initial"
 STATE_PARSING_KEY = "parsing_key"
 STATE_PARSING_VALUE = "parsing_value"
@@ -40,21 +42,33 @@ class BufferedStreamReader:
 
 
 class EnvFileParser:
-    def __init__(self, stream):
+    def __init__(self, stream=None):
         self.state = STATE_INITIAL
-        self._stream = BufferedStreamReader(stream)
+
+        if stream is not None:
+            stream = BufferedStreamReader(stream)
+        self._stream = stream
 
         self._current_key = []
         self._current_value = []
         self._current_quote = ""
         self._key_parsed = False
 
-    def parse_config(self) -> Iterator[Tuple[str, str]]:
+    def parse_config(self, stream=None):
+        if stream is None and self._stream is None:
+            raise ParserError('Stream required')
+
+        if stream is None:
+            stream = self._stream
+
+        if not isinstance(stream, BufferedStreamReader):
+            stream = BufferedStreamReader(stream)
+
         key = self._current_key
         value = self._current_value
 
         while True:
-            char = self._stream.read_char()
+            char = stream.read_char()
             if not char:
                 if key or value:
                     yield self._return_current_config()
